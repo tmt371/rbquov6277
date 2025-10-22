@@ -118,9 +118,9 @@ export class WorkflowService {
                         <td class="${fabricClass}">${item.fabric || ''}</td>
                         <td class="${fabricClass}">${item.color || ''}</td>
                         <td>${item.location || ''}</td>
-                        <td class="text-center">${item.winder === 'HD' ? '✓' : ''}</td>
-                        <td class="text-center">${item.dual === 'D' ? '✓' : ''}</td>
-                        <td class="text-center">${item.motor ? '✓' : ''}</td>
+                        <td class="text-center">${item.winder === 'HD' ? '✔' : ''}</td>
+                        <td class="text-center">${item.dual === 'D' ? '✔' : ''}</td>
+                        <td class="text-center">${item.motor ? '✔' : ''}</td>
                         <td class="text-right">$${finalPrice.toFixed(2)}</td>
                     </tr>
                 `;
@@ -257,6 +257,24 @@ export class WorkflowService {
         const summaryData = this.calculationService.calculateF2Summary(quoteData, ui);
         const grandTotal = parseFloat(f3Data.finalOfferPrice) || summaryData.gst || 0;
         const items = quoteData.products.rollerBlind.items;
+        const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
+
+        // [NEW] Start: Logic to gather accessory details for the appendix table
+        const motorQty = items.filter(item => !!item.motor).length;
+        const motorPrice = this.calculationService.calculateF1ComponentPrice('motor', motorQty);
+
+        const totalRemoteQty = ui.driveRemoteCount || 0;
+        const remote1chQty = ui.f1.remote_1ch_qty;
+        const remote16chQty = (ui.f1.remote_1ch_qty === null) ? totalRemoteQty : (totalRemoteQty - remote1chQty);
+        const remote1chPrice = this.calculationService.calculateF1ComponentPrice('remote-1ch', remote1chQty);
+        const remote16chPrice = this.calculationService.calculateF1ComponentPrice('remote-16ch', remote16chQty);
+
+        const chargerQty = ui.driveChargerCount || 0;
+        const chargerPrice = this.calculationService.calculateF1ComponentPrice('charger', chargerQty);
+
+        const cord3mQty = ui.driveCordCount || 0;
+        const cord3mPrice = this.calculationService.calculateF1ComponentPrice('3m-cord', cord3mQty);
+        // [NEW] End: Logic to gather accessory details
 
         return {
             // --- Header & Customer Info ---
@@ -279,6 +297,19 @@ export class WorkflowService {
             // --- Terms & Appendix ---
             termsAndConditions: (f3Data.termsConditions || 'Standard terms and conditions apply.').replace(/\n/g, '<br>'),
             rollerBlindsTable: this._generateItemsTableHtml(items, summaryData), // For appendix page
+
+            // [NEW] Data for Motorised Accessories Summary Table
+            motorQty: motorQty || '',
+            motorPrice: formatPrice(motorPrice),
+            remote1chQty: remote1chQty || '',
+            remote1chPrice: formatPrice(remote1chPrice),
+            remote16chQty: remote16chQty || '',
+            remote16chPrice: formatPrice(remote16chPrice),
+            chargerQty: chargerQty || '',
+            chargerPrice: formatPrice(chargerPrice),
+            cord3mQty: cord3mQty || '',
+            cord3mPrice: formatPrice(cord3mPrice),
+            eAcceSum: formatPrice(summaryData.eAcceSum),
         };
     }
 

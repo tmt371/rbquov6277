@@ -151,6 +151,28 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
+        
+        /* --- [NEW] Flexbox container for appendix layout --- */
+        .appendix-flex-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            align-items: flex-start; /* Align items to the top */
+        }
+
+        .appendix-flex-container > * {
+            flex: 1; /* Each child takes up equal space */
+            min-width: 0; /* Allow flex items to shrink */
+        }
+
+        /* On smaller screens, stack them vertically */
+        @media (max-width: 850px) {
+            .appendix-flex-container {
+                flex-direction: column;
+            }
+        }
+        /* --- End of new styles --- */
+
 
         @media (max-width: 768px) {
             .page-container {
@@ -185,63 +207,66 @@
                 {{{rollerBlindsTable}}}
             </div>
 
-            <div class="table-scroll-wrapper">
-                <table class="motorised-accessories-table">
-                    <thead>
-                        <tr class="table-title">
-                            <th colspan="3">Motorised Accessories Summary</th>
-                        </tr>
-                        <tr>
-                            <th>Item</th>
-                            <th class="text-center">QTY</th>
-                            <th class="text-right">Total Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Motor</td>
-                            <td class="text-center">{{motorQty}}</td>
-                            <td class="text-right">{{motorPrice}}</td>
-                        </tr>
-                        <tr>
-                            <td>Remote (1CH)</td>
-                            <td class="text-center">{{remote1chQty}}</td>
-                            <td class="text-right">{{remote1chPrice}}</td>
-                        </tr>
-                        <tr>
-                            <td>Remote (16CH)</td>
-                            <td class="text-center">{{remote16chQty}}</td>
-                            <td class="text-right">{{remote16chPrice}}</td>
-                        </tr>
-                        <tr>
-                            <td>Charger</td>
-                            <td class="text-center">{{chargerQty}}</td>
-                            <td class="text-right">{{chargerPrice}}</td>
-                        </tr>
-                        <tr>
-                            <td>3M Cord</td>
-                            <td class="text-center">{{cord3mQty}}</td>
-                            <td class="text-right">{{cord3mPrice}}</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td colspan="2" class="text-right">Total</td>
-                            <td class="text-right">{{eAcceSum}}</td>
-                        </tr>
-                    </tfoot>
-                </table>
+            <div class="appendix-flex-container">
+                <div class="table-scroll-wrapper">
+                    <table class="motorised-accessories-table">
+                        <thead>
+                            <tr class="table-title">
+                                <th colspan="3">Motorised Accessories Summary</th>
+                            </tr>
+                            <tr>
+                                <th>Item</th>
+                                <th class="text-center">QTY</th>
+                                <th class="text-right">Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Motor</td>
+                                <td class="text-center">{{motorQty}}</td>
+                                <td class="text-right">{{motorPrice}}</td>
+                            </tr>
+                            <tr>
+                                <td>Remote (1CH)</td>
+                                <td class="text-center">{{remote1chQty}}</td>
+                                <td class="text-right">{{remote1chPrice}}</td>
+                            </tr>
+                            <tr>
+                                <td>Remote (16CH)</td>
+                                <td class="text-center">{{remote16chQty}}</td>
+                                <td class="text-right">{{remote16chPrice}}</td>
+                            </tr>
+                            <tr>
+                                <td>Charger</td>
+                                <td class="text-center">{{chargerQty}}</td>
+                                <td class="text-right">{{chargerPrice}}</td>
+                            </tr>
+                            <tr>
+                                <td>3M Cord</td>
+                                <td class="text-center">{{cord3mQty}}</td>
+                                <td class="text-right">{{cord3mPrice}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="2" class="text-right">Total</td>
+                                <td class="text-right">{{eAcceSum}}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="legend">
+                    <h3>Abbreviations Key</h3>
+                    <p><strong>TYPE:</strong> BO = Blockout, SN = Screen, LF = Light Filter</p>
+                    <p><strong>Over:</strong> O = Over Roll</p>
+                    <p><strong>I/O:</strong> IN = Inside Mount, OUT = Outside Mount</p>
+                    <p><strong>L/R:</strong> L = Left Control, R = Right Control</p>
+                    <p><strong>H-Winder:</strong> Heavy-Duty Winder</p>
+                    <p><strong>D'Bracket:</strong> Double Bracket</p>
+                </div>
             </div>
-            <div class="legend">
-                <h3>Abbreviations Key</h3>
-                <p><strong>TYPE:</strong> BO = Blockout, SN = Screen, LF = Light Filter</p>
-                <p><strong>Over:</strong> O = Over Roll</p>
-                <p><strong>I/O:</strong> IN = Inside Mount, OUT = Outside Mount</p>
-                <p><strong>L/R:</strong> L = Left Control, R = Right Control</p>
-                <p><strong>H-Winder:</strong> Heavy-Duty Winder</p>
-                <p><strong>D'Bracket:</strong> Double Bracket</p>
             </div>
-        </div>
     </div>
 
 </body>
