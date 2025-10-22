@@ -93,7 +93,7 @@ export class QuotePreviewComponent {
     }
 
     /**
-     * [MODIFIED] Dynamically loads the juice script from a LOCAL path if it's not already loaded.
+     * [NEW] Dynamically loads the juice script from a CDN if it's not already loaded.
      * Returns a promise that resolves when the script is ready.
      * @private
      */
@@ -115,11 +115,10 @@ export class QuotePreviewComponent {
 
             const script = document.createElement('script');
             script.id = 'juice-script';
-            // [MODIFIED] Point to the local file instead of the external CDN.
-            script.src = './04-core-code/lib/juice.min.js';
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/juice/10.0.0/juice.min.js';
             script.onload = () => resolve();
             script.onerror = (e) => {
-                console.error('Failed to load juice.min.js from local path.', e);
+                console.error('Failed to load juice.js from CDN.', e);
                 reject(new Error('Failed to load the HTML processing library.'));
             };
             document.head.appendChild(script);
@@ -127,7 +126,7 @@ export class QuotePreviewComponent {
     }
 
     /**
-     * Inlines CSS and copies the resulting HTML to the clipboard.
+     * [MODIFIED] Inlines CSS and copies the resulting HTML to the clipboard.
      * Now dynamically loads the script on demand and waits for it to be ready.
      */
     async copyHtmlToClipboard() {
