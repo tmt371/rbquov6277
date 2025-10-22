@@ -1,6 +1,8 @@
 // File: 04-core-code/ui/quote-preview-component.js
 
 import { EVENTS } from '../config/constants.js';
+// [MODIFIED] Import juice from its new local path within the project.
+import juice from '../lib/juice.min.js';
 
 /**
  * @fileoverview A component to manage the full-screen quote preview overlay.
@@ -93,60 +95,22 @@ export class QuotePreviewComponent {
     }
 
     /**
-     * [NEW] Dynamically loads the juice script from a CDN if it's not already loaded.
-     * Returns a promise that resolves when the script is ready.
-     * @private
+     * Inlines CSS and copies the resulting HTML to the clipboard.
      */
-    _loadJuiceScript() {
-        return new Promise((resolve, reject) => {
-            // If juice is already loaded, resolve immediately.
-            if (typeof window.juice === 'function') {
-                resolve();
-                return;
-            }
-
-            // If a script is already in the process of loading, wait for it.
-            const existingScript = document.querySelector('#juice-script');
-            if (existingScript) {
-                existingScript.addEventListener('load', () => resolve());
-                existingScript.addEventListener('error', (e) => reject(e));
-                return;
-            }
-
-            const script = document.createElement('script');
-            script.id = 'juice-script';
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/juice/10.0.0/juice.min.js';
-            script.onload = () => resolve();
-            script.onerror = (e) => {
-                console.error('Failed to load juice.js from CDN.', e);
-                reject(new Error('Failed to load the HTML processing library.'));
-            };
-            document.head.appendChild(script);
-        });
-    }
-
-    /**
-     * [MODIFIED] Inlines CSS and copies the resulting HTML to the clipboard.
-     * Now dynamically loads the script on demand and waits for it to be ready.
-     */
-    async copyHtmlToClipboard() {
+    copyHtmlToClipboard() {
         if (!this.htmlContent) {
             this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "Error: No HTML content to copy.", type: 'error' });
             return;
         }
 
-        try {
-            await this._loadJuiceScript();
+        // Use the imported juice module directly.
+        const inlinedHtml = juice(this.htmlContent);
 
-            const inlinedHtml = window.juice(this.htmlContent);
-
-            await navigator.clipboard.writeText(inlinedHtml);
-
+        navigator.clipboard.writeText(inlinedHtml).then(() => {
             this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "HTML with inlined styles copied to clipboard!" });
-
-        } catch (error) {
-            console.error('Failed to copy HTML: ', error);
-            this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: error.message || "Error: Could not copy HTML to clipboard.", type: 'error' });
-        }
+        }).catch(err => {
+            console.error('Failed to copy HTML: ', err);
+            this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "Error: Could not copy HTML to clipboard.", type: 'error' });
+        });
     }
 }
