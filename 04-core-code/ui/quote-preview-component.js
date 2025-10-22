@@ -1,9 +1,7 @@
 // File: 04-core-code/ui/quote-preview-component.js
 
 import { EVENTS } from '../config/constants.js';
-// [MODIFIED] Use a relative path to import the module directly from node_modules.
-// This is required for browser-native ES module resolution without a bundler.
-import juice from '../../node_modules/juice/index.js';
+import juice from 'juice'; // [MODIFIED] Import juice as an ES module
 
 /**
  * @fileoverview A component to manage the full-screen quote preview overlay.
