@@ -94,7 +94,7 @@ export class QuotePreviewComponent {
     }
 
     /**
-     * [MODIFIED] Inlines CSS and copies the resulting HTML to the clipboard.
+     * [NEW] Inlines CSS and copies the resulting HTML to the clipboard.
      */
     copyHtmlToClipboard() {
         if (!this.htmlContent) {
@@ -102,8 +102,8 @@ export class QuotePreviewComponent {
             return;
         }
 
-        // Use the globally available `juice` function by referencing it via the window object
-        const inlinedHtml = window.juice(this.htmlContent);
+        // Use the globally available `juice` function
+        const inlinedHtml = juice(this.htmlContent);
 
         navigator.clipboard.writeText(inlinedHtml).then(() => {
             this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "HTML with inlined styles copied to clipboard!" });
