@@ -258,25 +258,27 @@ export class WorkflowService {
         const grandTotal = parseFloat(f3Data.finalOfferPrice) || summaryData.gst || 0;
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
-        const { getAccessoryPrice } = this.calculationService.configManager;
+        
+        // [MODIFIED] Do not destructure the method. Call it directly on the configManager instance.
+        const configManager = this.calculationService.configManager;
 
         // [MODIFIED] Start: Logic to gather accessory details for the appendix table using LIST PRICES.
         const motorQty = items.filter(item => !!item.motor).length;
-        const motorPrice = (getAccessoryPrice('motorStandard') || 0) * motorQty;
+        const motorPrice = (configManager.getAccessoryPrice('motorStandard') || 0) * motorQty;
 
         const totalRemoteQty = ui.driveRemoteCount || 0;
         const remote1chQty = ui.f1.remote_1ch_qty;
         const remote16chQty = (ui.f1.remote_1ch_qty === null) ? totalRemoteQty : (totalRemoteQty - remote1chQty);
         // Per user request, both 1ch and 16ch remotes are priced at $100 (remoteStandard price)
-        const remotePricePerUnit = getAccessoryPrice('remoteStandard') || 0;
+        const remotePricePerUnit = configManager.getAccessoryPrice('remoteStandard') || 0;
         const remote1chPrice = remotePricePerUnit * remote1chQty;
         const remote16chPrice = remotePricePerUnit * remote16chQty;
 
         const chargerQty = ui.driveChargerCount || 0;
-        const chargerPrice = (getAccessoryPrice('chargerStandard') || 0) * chargerQty;
+        const chargerPrice = (configManager.getAccessoryPrice('chargerStandard') || 0) * chargerQty;
 
         const cord3mQty = ui.driveCordCount || 0;
-        const cord3mPrice = (getAccessoryPrice('cord3m') || 0) * cord3mQty;
+        const cord3mPrice = (configManager.getAccessoryPrice('cord3m') || 0) * cord3mQty;
         // [MODIFIED] End: Logic to gather accessory details
 
         return {
