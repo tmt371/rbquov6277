@@ -93,17 +93,6 @@
     background-color: #5a6268;
 }
 
-/* [NEW] Style for the new HTML button */
-.preview-btn-html {
-    background-color: #059669; /* Green */
-    color: white;
-    border-color: #047857;
-}
-
-.preview-btn-html:hover {
-    background-color: #047857;
-}
-
 
 /* --- Print-Specific Styles --- */
 @media print {

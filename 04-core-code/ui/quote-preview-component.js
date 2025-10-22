@@ -12,13 +12,11 @@ export class QuotePreviewComponent {
         }
         this.container = containerElement;
         this.eventAggregator = eventAggregator;
-        this.htmlContent = ''; // [NEW] Store the current HTML content
 
         this.contentElement = this.container.querySelector('.quote-preview-content');
         this.iframe = this.container.querySelector('.quote-preview-iframe');
         this.closeButton = this.container.querySelector('.preview-btn-secondary');
         this.printButton = this.container.querySelector('.preview-btn-primary');
-        this.htmlButton = this.container.querySelector('.preview-btn-html'); // [NEW] Get the new button
 
         this.initialize();
         console.log("QuotePreviewComponent Initialized.");
@@ -35,11 +33,6 @@ export class QuotePreviewComponent {
             this.printButton.addEventListener('click', () => this.print());
         }
 
-        // [NEW] Add event listener for the new HTML button
-        if (this.htmlButton) {
-            this.htmlButton.addEventListener('click', () => this.copyHtmlToClipboard());
-        }
-
         this.container.addEventListener('click', (event) => {
             if (event.target === this.container) {
                 this.hide();
@@ -53,8 +46,6 @@ export class QuotePreviewComponent {
      */
     show(htmlContent) {
         if (!this.iframe) return;
-
-        this.htmlContent = htmlContent; // [NEW] Store the content
 
         // Use srcdoc to inject the HTML content. This provides a clean sandbox.
         this.iframe.srcdoc = htmlContent;
@@ -75,7 +66,6 @@ export class QuotePreviewComponent {
         if (this.iframe) {
             this.iframe.srcdoc = ''; // Clear content
         }
-        this.htmlContent = ''; // [NEW] Clear stored content
     }
 
     /**
@@ -91,25 +81,5 @@ export class QuotePreviewComponent {
                 type: 'error'
             });
         }
-    }
-
-    /**
-     * [NEW] Inlines CSS and copies the resulting HTML to the clipboard.
-     */
-    copyHtmlToClipboard() {
-        if (!this.htmlContent) {
-            this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "Error: No HTML content to copy.", type: 'error' });
-            return;
-        }
-
-        // Use the globally available `juice` function
-        const inlinedHtml = juice(this.htmlContent);
-
-        navigator.clipboard.writeText(inlinedHtml).then(() => {
-            this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "HTML with inlined styles copied to clipboard!" });
-        }).catch(err => {
-            console.error('Failed to copy HTML: ', err);
-            this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "Error: Could not copy HTML to clipboard.", type: 'error' });
-        });
     }
 }
