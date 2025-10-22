@@ -1,9 +1,8 @@
 // File: 04-core-code/ui/quote-preview-component.js
 
 import { EVENTS } from '../config/constants.js';
-// [MODIFIED] Use a relative path to import the module directly from node_modules.
-// This is required for browser-native ES module resolution without a bundler.
-import juice from '../../node_modules/juice/index.js';
+// [MODIFIED] Import juice from its new local path within the project.
+import juice from '../lib/juice.min.js';
 
 /**
  * @fileoverview A component to manage the full-screen quote preview overlay.
@@ -96,7 +95,7 @@ export class QuotePreviewComponent {
     }
 
     /**
-     * [MODIFIED] Inlines CSS and copies the resulting HTML to the clipboard.
+     * Inlines CSS and copies the resulting HTML to the clipboard.
      */
     copyHtmlToClipboard() {
         if (!this.htmlContent) {
@@ -104,7 +103,7 @@ export class QuotePreviewComponent {
             return;
         }
 
-        // [MODIFIED] Use the imported juice module directly.
+        // Use the imported juice module directly.
         const inlinedHtml = juice(this.htmlContent);
 
         navigator.clipboard.writeText(inlinedHtml).then(() => {
