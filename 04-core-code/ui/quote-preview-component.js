@@ -1,7 +1,6 @@
 // File: 04-core-code/ui/quote-preview-component.js
 
 import { EVENTS } from '../config/constants.js';
-import juice from 'juice'; // [MODIFIED] Import juice as an ES module
 
 /**
  * @fileoverview A component to manage the full-screen quote preview overlay.
@@ -13,13 +12,13 @@ export class QuotePreviewComponent {
         }
         this.container = containerElement;
         this.eventAggregator = eventAggregator;
-        this.htmlContent = ''; // Store the current HTML content
+        this.htmlContent = ''; // [NEW] Store the current HTML content
 
         this.contentElement = this.container.querySelector('.quote-preview-content');
         this.iframe = this.container.querySelector('.quote-preview-iframe');
         this.closeButton = this.container.querySelector('.preview-btn-secondary');
         this.printButton = this.container.querySelector('.preview-btn-primary');
-        this.htmlButton = this.container.querySelector('.preview-btn-html');
+        this.htmlButton = this.container.querySelector('.preview-btn-html'); // [NEW] Get the new button
 
         this.initialize();
         console.log("QuotePreviewComponent Initialized.");
@@ -36,6 +35,7 @@ export class QuotePreviewComponent {
             this.printButton.addEventListener('click', () => this.print());
         }
 
+        // [NEW] Add event listener for the new HTML button
         if (this.htmlButton) {
             this.htmlButton.addEventListener('click', () => this.copyHtmlToClipboard());
         }
@@ -54,7 +54,7 @@ export class QuotePreviewComponent {
     show(htmlContent) {
         if (!this.iframe) return;
 
-        this.htmlContent = htmlContent; // Store the content
+        this.htmlContent = htmlContent; // [NEW] Store the content
 
         // Use srcdoc to inject the HTML content. This provides a clean sandbox.
         this.iframe.srcdoc = htmlContent;
@@ -75,7 +75,7 @@ export class QuotePreviewComponent {
         if (this.iframe) {
             this.iframe.srcdoc = ''; // Clear content
         }
-        this.htmlContent = ''; // Clear stored content
+        this.htmlContent = ''; // [NEW] Clear stored content
     }
 
     /**
@@ -102,8 +102,8 @@ export class QuotePreviewComponent {
             return;
         }
 
-        // [MODIFIED] Use the imported juice module directly.
-        const inlinedHtml = juice(this.htmlContent);
+        // Use the globally available `juice` function by referencing it via the window object
+        const inlinedHtml = window.juice(this.htmlContent);
 
         navigator.clipboard.writeText(inlinedHtml).then(() => {
             this.eventAggregator.publish(EVENTS.SHOW_NOTIFICATION, { message: "HTML with inlined styles copied to clipboard!" });
