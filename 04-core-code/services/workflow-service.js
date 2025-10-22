@@ -258,23 +258,26 @@ export class WorkflowService {
         const grandTotal = parseFloat(f3Data.finalOfferPrice) || summaryData.gst || 0;
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
+        const { getAccessoryPrice } = this.calculationService.configManager;
 
-        // [NEW] Start: Logic to gather accessory details for the appendix table
+        // [MODIFIED] Start: Logic to gather accessory details for the appendix table using LIST PRICES.
         const motorQty = items.filter(item => !!item.motor).length;
-        const motorPrice = this.calculationService.calculateF1ComponentPrice('motor', motorQty);
+        const motorPrice = (getAccessoryPrice('motorStandard') || 0) * motorQty;
 
         const totalRemoteQty = ui.driveRemoteCount || 0;
         const remote1chQty = ui.f1.remote_1ch_qty;
         const remote16chQty = (ui.f1.remote_1ch_qty === null) ? totalRemoteQty : (totalRemoteQty - remote1chQty);
-        const remote1chPrice = this.calculationService.calculateF1ComponentPrice('remote-1ch', remote1chQty);
-        const remote16chPrice = this.calculationService.calculateF1ComponentPrice('remote-16ch', remote16chQty);
+        // Per user request, both 1ch and 16ch remotes are priced at $100 (remoteStandard price)
+        const remotePricePerUnit = getAccessoryPrice('remoteStandard') || 0;
+        const remote1chPrice = remotePricePerUnit * remote1chQty;
+        const remote16chPrice = remotePricePerUnit * remote16chQty;
 
         const chargerQty = ui.driveChargerCount || 0;
-        const chargerPrice = this.calculationService.calculateF1ComponentPrice('charger', chargerQty);
+        const chargerPrice = (getAccessoryPrice('chargerStandard') || 0) * chargerQty;
 
         const cord3mQty = ui.driveCordCount || 0;
-        const cord3mPrice = this.calculationService.calculateF1ComponentPrice('3m-cord', cord3mQty);
-        // [NEW] End: Logic to gather accessory details
+        const cord3mPrice = (getAccessoryPrice('cord3m') || 0) * cord3mQty;
+        // [MODIFIED] End: Logic to gather accessory details
 
         return {
             // --- Header & Customer Info ---
@@ -298,7 +301,7 @@ export class WorkflowService {
             termsAndConditions: (f3Data.termsConditions || 'Standard terms and conditions apply.').replace(/\n/g, '<br>'),
             rollerBlindsTable: this._generateItemsTableHtml(items, summaryData), // For appendix page
 
-            // [NEW] Data for Motorised Accessories Summary Table
+            // [MODIFIED] Data for Motorised Accessories Summary Table
             motorQty: motorQty || '',
             motorPrice: formatPrice(motorPrice),
             remote1chQty: remote1chQty || '',
